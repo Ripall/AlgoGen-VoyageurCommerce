@@ -9,8 +9,7 @@ City = namedtuple('City', 'name,x,y')
 class Individual:
 
     def __init__(self, cities):
-        self.cities = cities
-        shuffle(self.cities)
+        self.cities = list(cities)
         self.score = 0
 
     def mutate(self):
@@ -43,16 +42,17 @@ class Population:
         self.mutationRate = mutationRate
         self.crossRate = crossRate
         for i in range(size):
+            shuffle(cities)
             self.individuals.append(Individual(cities))
 
     def selection(self):
         for individual in self.individuals:
             individual.fitness()
+            print(individual.score)
 
-        sorted(self.individuals, key=lambda x: x.score)
+        self.individuals = sorted(self.individuals, key=lambda x: x.score)
 
-
-
+        self.individuals = self.individuals[:self.size]
 
     def run(self):
         # Crossover
