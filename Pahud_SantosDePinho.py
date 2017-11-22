@@ -1,9 +1,7 @@
-import pygame
+import pygame, sys
 from pygame.locals import KEYDOWN, QUIT, MOUSEBUTTONDOWN, K_RETURN, K_ESCAPE
 from collections import namedtuple
-import sys
-from random import shuffle
-
+from random import shuffle, randint
 
 City = namedtuple('City', 'name,x,y')
 
@@ -12,10 +10,20 @@ class Individual:
 
     def __init__(self, cities):
         self.cities = cities
-        print(self.cities)
+        shuffle(self.cities)
+        self.score = 0
 
     def mutate(self):
-        pass
+        valMax = len(self.cities)-1
+        i1 = randint(0,valMax)
+
+        i2 = randint(0,valMax)
+        while i2 == i1:
+            i2 = randint(0,valMax)
+
+        temp = self.cities[i1]
+        self.cities[i1] = self.cities[i2]
+        self.cities[i2] = temp
 
     def cross_breeding(self,individual):
         pass
@@ -23,8 +31,8 @@ class Individual:
     def fitness(self):
         value = 0
         for i, city in enumerate(self.cities):
-            value += abs(city.x-city[i-1].x)+abs(city.y-city[i-1].y)
-        return value
+            value += abs(city.x-self.cities[i-1].x)+abs(city.y-self.cities[i-1].y)
+        self.score = value
 
 
 class Population:
@@ -35,9 +43,26 @@ class Population:
         self.mutationRate = mutationRate
         self.crossRate = crossRate
         for i in range(size):
-            shuffle(cities)
             self.individuals.append(Individual(cities))
 
+    def selection(self):
+        for individual in self.individuals:
+            individual.fitness()
+
+        sorted(self.individuals, key=lambda x: x.score)
+
+
+
+
+    def run(self):
+        # Crossover
+
+        # Selection
+        self.selection()
+        # Mutation
+        for individual in self.individuals:
+            if randint(0,100) < self.mutationRate:
+                individual.mutate()
 
 def read_from_gui():
     screen_x = 500
@@ -89,7 +114,7 @@ def reading_from_file(filename):
     with open(filename) as file:
         for line in file:
             args = line.split()
-            cityList.append(City(args[0], args[1], args[2]))
+            cityList.append(City(args[0], int(args[1]), int(args[2])))
     return cityList
 
 
@@ -100,8 +125,8 @@ def ga_solve(file=None, gui=True, maxtime=0):
     else:
         cities = reading_from_file(file)
 
-    pop = Population(10, 0.001, 7, cities)
-
+    pop = Population(5, 10, 7, cities)
+    pop.run()
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
