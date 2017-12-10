@@ -84,7 +84,14 @@ class Population:
             individual.fitness()
         self.individuals = sorted(self.individuals, key=lambda x: x.score)
         # prendre env 50 % des meilleurs et le reste aléa
-        self.individuals = self.individuals[:self.size]
+        cut = int(self.size/2)
+        remaining = self.size - cut
+        temp = self.individuals.copy()
+        self.individuals = self.individuals[:cut]
+        temp = [x for x in temp if x not in self.individuals]
+        shuffle(temp)
+        for i in range(0, remaining):
+            self.individuals.append(temp[i])
 
     def run(self, gui=False):
         # Crossover
@@ -185,6 +192,7 @@ def ga_solve(file=None, gui=True, maxTime = 0):
     pop = Population(5, 10, 7, cities)
     while time.time()-startTime < maxTime:
         pop.run(gui)
+
     print(pop.individuals[0].score)
 
 
