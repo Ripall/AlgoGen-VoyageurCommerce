@@ -215,7 +215,22 @@ def ga_solve(file=None, gui=True, maxTime = 0):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        ga_solve(sys.argv[1],True,0)
-    else:
-        ga_solve()
+    args = sys.argv
+    args.pop(0)
+    gui = True
+    file = None
+    maxTime = 0
+    traited_args = list()
+    print(args)
+    for i in range(0, len(args)):
+        if args[i] not in traited_args:
+            if args[i] == "--nogui":
+                gui = False
+            elif args[i] == "--maxtime":
+                maxTime = int(args[i+1])
+                traited_args.append([args[i+1]])
+            else:
+                file = args[i]
+        traited_args.append(args[i])
+    ga_solve(file, gui, maxTime)
+
