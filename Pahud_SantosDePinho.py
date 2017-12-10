@@ -86,7 +86,7 @@ class Population:
         # prendre env 50 % des meilleurs et le reste aléa
         self.individuals = self.individuals[:self.size]
 
-    def run(self):
+    def run(self, gui=False):
         # Crossover
         crossed = []
         for i in range(0, len(self.individuals)-1,2):
@@ -103,16 +103,32 @@ class Population:
         # Selection
         self.selection()
 
+        if gui:
+            draw_path(self.individuals[0])
+
+# Display constants
+screen_x = 500
+screen_y = 500
+
+city_color = [10, 10, 200]  # blue
+city_radius = 3
+
+font_color = [255, 255, 255]  # white
+
+def draw_path(individual):
+    pygame.init()
+    window = pygame.display.set_mode((screen_x, screen_y))
+    pygame.display.set_caption('Exemple')
+    screen = pygame.display.get_surface()
+    font = pygame.font.Font(None, 30)
+
+    for i, city in enumerate(individual.cities):
+        pygame.draw.line(screen, city_color, (individual.cities[i].x, individual.cities[i].y), (individual.cities[i-1].x, individual.cities[i-1].y))
+
+    pygame.display.flip()
+
 
 def read_from_gui():
-    screen_x = 500
-    screen_y = 500
-
-    city_color = [10, 10, 200]  # blue
-    city_radius = 3
-
-    font_color = [255, 255, 255]  # white
-
     pygame.init()
     window = pygame.display.set_mode((screen_x, screen_y))
     pygame.display.set_caption('Exemple')
@@ -168,12 +184,12 @@ def ga_solve(file=None, gui=True, maxTime = 0):
 
     pop = Population(5, 10, 7, cities)
     while time.time()-startTime < maxTime:
-        pop.run()
+        pop.run(gui)
     print(pop.individuals[0].score)
 
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        ga_solve(sys.argv[1],False,1)
+        ga_solve(sys.argv[1],True,1)
     else:
         ga_solve()
