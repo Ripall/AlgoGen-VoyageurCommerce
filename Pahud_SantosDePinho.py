@@ -82,7 +82,7 @@ class Population:
     def selection(self):
         for individual in self.individuals:
             individual.fitness()
-        self.individuals = sorted(self.individuals, key=lambda x: x.score)
+        self.individuals.sort(key=lambda x: x.score)
         # prendre env 50 % des meilleurs et le reste aléa
         cut = int(self.size/2)
         remaining = self.size - cut
