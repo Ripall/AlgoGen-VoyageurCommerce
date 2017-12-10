@@ -189,12 +189,12 @@ def ga_solve(file=None, gui=True, maxTime = 0):
     else:
         cities = reading_from_file(file)
 
-    pop = Population(5, 10, 7, cities)
+    pop = Population(5, 5, 5, cities)
 
     if maxTime==0:
         average = 0
         stagnation = [-1]
-        while average < stagnation[-1]*0.99 or average > stagnation[-1]*1.01:
+        while average < stagnation[0]*0.99 or average > stagnation[0]*1.01:
             pop.run(gui)
             average=0
             stagnation.insert(0,pop.individuals[0].score)
