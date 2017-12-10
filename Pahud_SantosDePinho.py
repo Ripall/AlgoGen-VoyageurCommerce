@@ -190,14 +190,32 @@ def ga_solve(file=None, gui=True, maxTime = 0):
         cities = reading_from_file(file)
 
     pop = Population(5, 10, 7, cities)
-    while time.time()-startTime < maxTime:
-        pop.run(gui)
 
-    print(pop.individuals[0].score)
+    if maxTime==0:
+        average = 0
+        stagnation = [-1]
+        while average < stagnation[-1]*0.99 or average > stagnation[-1]*1.01:
+            pop.run(gui)
+            average=0
+            stagnation.insert(0,pop.individuals[0].score)
+            length = len(stagnation)
+            if length>9:
+                stagnation.pop()
+                for n in stagnation:
+                    average += n
+                average /= length
+
+    else:
+        while time.time()-startTime < maxTime:
+            pop.run(gui)
+
+    names = [x.name for x in pop.individuals[0].cities]
+    print (pop.individuals[0].score, names)
+    return (pop.individuals[0].score, names)
 
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        ga_solve(sys.argv[1],True,1)
+        ga_solve(sys.argv[1],True,0)
     else:
         ga_solve()
