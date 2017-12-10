@@ -94,6 +94,11 @@ class Population:
             self.individuals.append(temp[i])
 
     def run(self, gui=False):
+        # Mutation
+        for individual in self.individuals:
+            if randint(0, 100) < self.mutationRate:
+                individual.mutate()
+
         # Crossover
         crossed = []
         for i in range(0, len(self.individuals)-1,2):
@@ -101,11 +106,6 @@ class Population:
                 crossed.append(self.individuals[i].cross_breeding(self.individuals[i+1]))
 
         self.individuals = self.individuals+crossed
-
-        # Mutation
-        for individual in self.individuals:
-            if randint(0, 100) < self.mutationRate:
-                individual.mutate()
 
         # Selection
         self.selection()
@@ -189,7 +189,9 @@ def ga_solve(file=None, gui=True, maxTime = 0):
     else:
         cities = reading_from_file(file)
 
-    pop = Population(100, 5, 50, cities)
+
+    pop = Population(100, 2, 75, cities)
+
 
     if maxTime==0:
         average = 0
@@ -235,4 +237,3 @@ if __name__ == "__main__":
                 file = args[i]
         traited_args.append(args[i])
     ga_solve(file, gui, maxTime)
-
