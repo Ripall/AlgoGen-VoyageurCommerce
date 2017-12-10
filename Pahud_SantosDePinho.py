@@ -57,7 +57,7 @@ class Individual:
     def fitness(self):
         value = 0
         for i, city in enumerate(self.cities):
-            value += ((city.x-self.cities[i-1].x)**2+(city.y-self.cities[i-1].y)**2)**0.5
+            value += (city.x-self.cities[i-1].x)+(city.y-self.cities[i-1].y)
         self.score = value
 
     def __str__(self):
@@ -189,7 +189,7 @@ def ga_solve(file=None, gui=True, maxTime = 0):
     else:
         cities = reading_from_file(file)
 
-    pop = Population(5, 5, 5, cities)
+    pop = Population(100, 5, 50, cities)
 
     if maxTime==0:
         average = 0
@@ -210,8 +210,11 @@ def ga_solve(file=None, gui=True, maxTime = 0):
             pop.run(gui)
 
     names = [x.name for x in pop.individuals[0].cities]
-    print (pop.individuals[0].score, names)
-    return (pop.individuals[0].score, names)
+    score = 0
+    for j, city in enumerate(pop.individuals[0].cities):
+        score +=((city.x - pop.individuals[0].cities[j - 1].x)**2+(city.y - pop.individuals[0].cities[j - 1].y)**2)**0.5
+    print(score, names)
+    return score, names
 
 
 if __name__ == "__main__":
@@ -221,7 +224,6 @@ if __name__ == "__main__":
     file = None
     maxTime = 0
     traited_args = list()
-    print(args)
     for i in range(0, len(args)):
         if args[i] not in traited_args:
             if args[i] == "--nogui":
